@@ -1,0 +1,23 @@
+
+    body {
+      background-color: #f4f6f9;
+    }
+    .table-responsive {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .btn-success {
+      background-color: #198754;
+    }
+
+    .table-responsive {
+  overflow-x: auto;
+}
+
+.table th, .table td {
+  white-space: normal; /* allow wrapping */
+  word-wrap: break-word;
+  max-width: 150px; /* optional: limit max cell width */
+}

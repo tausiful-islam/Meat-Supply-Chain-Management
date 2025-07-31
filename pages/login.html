@@ -49,11 +49,8 @@
             </label>
             <select class="form-select form-select-lg" id="role" required>
               <option selected disabled>Choose your role</option>
-              <option value="admin">Admin Manager</option>
-              <option value="inventory">Inventory Manager</option>
-              <option value="quality">Quality Controller</option>
-              <option value="logistics">Logistics Coordinator</option>
-              <option value="supplier">Supplier</option>
+              <option value="admin">Admin</option>
+              <option value="customer">Customer</option>
             </select>
           </div>
           
@@ -98,20 +95,11 @@
             case "admin":
               window.location.href = "admin_dashboard.html";
               break;
-            case "inventory":
-              window.location.href = "inventory.html";
-              break;
-            case "quality":
-              window.location.href = "quality_dashboard.html";
-              break;
-            case "logistics":
-              window.location.href = "logistics_dashboard.html";
-              break;
-            case "supplier":
-              window.location.href = "supplier_dashboard.html";
+            case "customer":
+              window.location.href = "customer_dashboard.html";
               break;
             default:
-              window.location.href = "inventory.html";
+              window.location.href = "customer_dashboard.html";
           }
         }, 1500);
       } else {
@@ -125,11 +113,9 @@
       const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
       if (existingUsers.length === 0) {
         const demoUsers = [
-          { userId: "admin", password: "admin123", role: "admin", name: "Admin User" },
-          { userId: "inventory", password: "inv123", role: "inventory", name: "Inventory Manager" },
-          { userId: "quality", password: "qual123", role: "quality", name: "Quality Controller" },
-          { userId: "logistics", password: "log123", role: "logistics", name: "Logistics Coordinator" },
-          { userId: "supplier", password: "sup123", role: "supplier", name: "Supplier User" }
+          { userId: "admin", password: "admin123", role: "admin", name: "Administrator" },
+          { userId: "customer", password: "customer123", role: "customer", name: "Customer User" },
+          { userId: "demo", password: "demo123", role: "customer", name: "Demo Customer" }
         ];
         localStorage.setItem("users", JSON.stringify(demoUsers));
       }

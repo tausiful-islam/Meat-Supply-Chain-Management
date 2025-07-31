@@ -12,7 +12,7 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-  <a class="navbar-brand fw-bold" href="../index.html"><i class="bi bi-truck me-2"></i>MeatChain Pro</a>
+  <a class="navbar-brand fw-bold" href="#" id="brandLink"><i class="bi bi-truck me-2"></i>MeatChain Pro</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -22,7 +22,9 @@
       <li class="nav-item"><a class="nav-link" href="inventory.html">Inventory</a></li>
       <li class="nav-item"><a class="nav-link" href="suppliers.html">Suppliers</a></li>
       <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+      <li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
       <li class="nav-item"><a class="nav-link" href="reports.html">Reports</a></li>
+      <li class="nav-item"><a class="nav-link" href="historical_data.html">Historical Data</a></li>
     </ul>
     <ul class="navbar-nav">
       <li class="nav-item dropdown">
@@ -258,8 +260,28 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+// Setup brand navigation based on user login status
+function setupBrandNavigation() {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const brandLink = document.getElementById('brandLink');
+    
+    if (user) {
+        // User is logged in, redirect to appropriate dashboard
+        if (user.role === 'admin') {
+            brandLink.href = 'admin_dashboard.html';
+        } else if (user.role === 'customer') {
+            brandLink.href = 'customer_dashboard.html';
+        }
+    } else {
+        // User is not logged in, redirect to home page
+        brandLink.href = '../index.html';
+    }
+}
+
 // Initialize revenue chart
 document.addEventListener('DOMContentLoaded', function() {
+    setupBrandNavigation();
+    
     const ctx = document.getElementById('revenueChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',

@@ -2,220 +2,344 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reports Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports Dashboard - MeatChain Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="../assests/Style/style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      background-color: #f4f6f9;
-    }
-    .card {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-    .filter-bar {
-      margin-bottom: 20px;
-    }
-    .chart-container {
-      position: relative;
-      max-width: 100%;
-      height: 300px;
-    }
-  </style>
 </head>
-<body>
+<body style="background-color: #f8f9fa;">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <a class="navbar-brand fw-bold" href="#" id="brandLink"><i class="bi bi-truck me-2"></i>MeatChain Pro</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto" id="navItems">
+      <!-- Navigation items will be loaded based on user role -->
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
 
 <div class="container-fluid mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <a href="/pages/admin.html" class="btn btn-outline-success">
-      <i class="bi bi-arrow-left-circle"></i> Dashboard
-    </a>
-    <h3 class="text-success mb-0"><i class="bi bi-graph-up"></i> Reports</h3>
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="text-danger fw-bold mb-0"><i class="bi bi-file-earmark-bar-graph me-2"></i>Reports Dashboard</h2>
+      <p class="text-muted mb-0">Comprehensive business reports and analytics</p>
+    </div>
     <button class="btn btn-danger" onclick="downloadPDF()">
-      <i class="bi bi-download"></i> Download PDF
+      <i class="bi bi-download me-2"></i>Download Report
     </button>
   </div>
 
   <!-- Filters -->
-  <div class="row filter-bar">
-    <div class="col-md-3 mb-2">
-      <select id="reportType" class="form-select">
-        <option value="tortoise">Tortoise Stats</option>
-        <option value="breeding">Breeding Programs</option>
-        <option value="feeding">Feeding Logs</option>
-        <option value="health">Health Records</option>
-        <option value="staff">Staff Tasks</option>
-        <option value="environment">Environment Conditions</option>
-      </select>
-    </div>
-    <div class="col-md-3 mb-2">
-      <input type="date" id="startDate" class="form-control" placeholder="Start Date" />
-    </div>
-    <div class="col-md-3 mb-2">
-      <input type="date" id="endDate" class="form-control" placeholder="End Date" />
-    </div>
-    <div class="col-md-3 mb-2">
-      <button id="filterBtn" class="btn btn-success w-100">Filter</button>
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-semibold">Report Type</label>
+          <select id="reportType" class="form-select">
+            <option value="inventory">Inventory Reports</option>
+            <option value="orders">Order Reports</option>
+            <option value="suppliers">Supplier Performance</option>
+            <option value="sales">Sales Analytics</option>
+            <option value="financial">Financial Summary</option>
+          </select>
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-semibold">Start Date</label>
+          <input type="date" id="startDate" class="form-control" />
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-semibold">End Date</label>
+          <input type="date" id="endDate" class="form-control" />
+        </div>
+        <div class="col-md-3 mb-2">
+          <label class="form-label fw-semibold">&nbsp;</label>
+          <button id="filterBtn" class="btn btn-danger w-100 d-block">
+            <i class="bi bi-funnel me-2"></i>Generate Report
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Charts -->
   <div class="row g-4" id="reportContent">
     <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Tortoise Population by Species</h5>
-        <div class="chart-container">
-          <canvas id="speciesChart"></canvas>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i>Inventory Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="inventoryChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Breeding Success Rate</h5>
-        <div class="chart-container">
-          <canvas id="breedingChart"></canvas>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Sales Performance</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="salesChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Feeding Log Overview</h5>
-        <div class="chart-container">
-          <canvas id="feedingChart"></canvas>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-warning text-dark">
+          <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>Order Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="orderChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Health Issues Summary</h5>
-        <div class="chart-container">
-          <canvas id="healthChart"></canvas>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0"><i class="bi bi-people me-2"></i>Supplier Performance</h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="supplierChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Staff Task Completion</h5>
-        <div class="chart-container">
-          <canvas id="staffChart"></canvas>
-        </div>
-      </div>
-    </div>
+  </div>
 
-    <div class="col-lg-6 col-md-12">
-      <div class="card p-3">
-        <h5 class="card-title text-success">Environmental Condition Trends</h5>
-        <div class="chart-container">
-          <canvas id="environmentChart"></canvas>
+  <!-- Summary Statistics -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0"><i class="bi bi-table me-2"></i>Summary Statistics</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3 text-center border-end">
+              <h4 class="text-danger mb-1">$125,450</h4>
+              <small class="text-muted">Total Revenue</small>
+            </div>
+            <div class="col-md-3 text-center border-end">
+              <h4 class="text-success mb-1">486</h4>
+              <small class="text-muted">Orders Processed</small>
+            </div>
+            <div class="col-md-3 text-center border-end">
+              <h4 class="text-warning mb-1">12</h4>
+              <small class="text-muted">Active Suppliers</small>
+            </div>
+            <div class="col-md-3 text-center">
+              <h4 class="text-info mb-1">2,850kg</h4>
+              <small class="text-muted">Products Sold</small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Chart Data & Script -->
-<script>
-  const speciesData = {
-    labels: ['Species A', 'Species B', 'Species C', 'Species D'],
-    datasets: [{
-      label: 'Number of Tortoises',
-      data: [30, 15, 40, 20],
-      backgroundColor: ['#198754', '#0d6efd', '#ffc107', '#dc3545']
-    }]
-  };
-
-  const breedingData = {
-    labels: ['Successful', 'Failed', 'Pending'],
-    datasets: [{
-      label: 'Breeding Outcomes',
-      data: [60, 25, 15],
-      backgroundColor: ['#198754', '#dc3545', '#ffc107']
-    }]
-  };
-
-  const feedingData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [{
-      label: 'Feeding Logs',
-      data: [100, 120, 90, 150, 130, 140],
-      borderColor: '#198754',
-      backgroundColor: 'rgba(25, 135, 84, 0.3)',
-      fill: true,
-      tension: 0.4
-    }]
-  };
-
-  const healthData = {
-    labels: ['Healthy', 'Minor Issues', 'Serious Issues'],
-    datasets: [{
-      label: 'Health Status',
-      data: [80, 15, 5],
-      backgroundColor: ['#198754', '#ffc107', '#dc3545']
-    }]
-  };
-
-  const staffData = {
-    labels: ['Completed', 'In Progress', 'Pending'],
-    datasets: [{
-      label: 'Tasks',
-      data: [50, 30, 20],
-      backgroundColor: ['#198754', '#0d6efd', '#ffc107']
-    }]
-  };
-
-  const environmentData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [{
-      label: 'Avg Temperature (°C)',
-      data: [27, 28, 29, 28, 27, 26],
-      borderColor: '#dc3545',
-      fill: false,
-      tension: 0.4
-    },
-    {
-      label: 'Avg Humidity (%)',
-      data: [60, 62, 65, 63, 61, 60],
-      borderColor: '#0d6efd',
-      fill: false,
-      tension: 0.4
-    }]
-  };
-
-  // Chart creation
-  new Chart(document.getElementById('speciesChart'), { type: 'bar', data: speciesData, options: { responsive: true, plugins: { legend: { display: false }}}});
-  new Chart(document.getElementById('breedingChart'), { type: 'pie', data: breedingData, options: { responsive: true }});
-  new Chart(document.getElementById('feedingChart'), { type: 'line', data: feedingData, options: { responsive: true }});
-  new Chart(document.getElementById('healthChart'), { type: 'doughnut', data: healthData, options: { responsive: true }});
-  new Chart(document.getElementById('staffChart'), { type: 'pie', data: staffData, options: { responsive: true }});
-  new Chart(document.getElementById('environmentChart'), { type: 'line', data: environmentData, options: { responsive: true }});
-
-  document.getElementById('filterBtn').addEventListener('click', () => {
-    alert('Filter functionality to be implemented.');
-  });
-</script>
-
-<!-- PDF Export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-  function downloadPDF() {
-    const report = document.getElementById('reportContent');
-    const opt = {
-      margin: 0.3,
-      filename: 'tortoise-report.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(report).save();
-  }
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Authentication and navigation setup
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuth();
+    setupBrandNavigation();
+    loadNavigation();
+    initializeCharts();
+});
+
+function checkAuth() {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Only admins can access reports
+    if (user.role !== 'admin') {
+        window.location.href = 'customer_dashboard.html';
+        return;
+    }
+}
+
+function setupBrandNavigation() {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const brandLink = document.getElementById('brandLink');
+    
+    if (user) {
+        // User is logged in, redirect to appropriate dashboard
+        if (user.role === 'admin') {
+            brandLink.href = 'admin_dashboard.html';
+        } else if (user.role === 'customer') {
+            brandLink.href = 'customer_dashboard.html';
+        }
+    } else {
+        // User is not logged in, redirect to home page
+        brandLink.href = '../index.html';
+    }
+}
+
+function loadNavigation() {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user) return;
+    
+    const navItems = document.getElementById('navItems');
+    if (user.role === 'admin') {
+        navItems.innerHTML = `
+            <li class="nav-item"><a class="nav-link" href="admin_dashboard.html">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="inventory.html">Inventory</a></li>
+            <li class="nav-item"><a class="nav-link" href="suppliers.html">Suppliers</a></li>
+            <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+            <li class="nav-item"><a class="nav-link" href="analytics.html">Analytics</a></li>
+            <li class="nav-item"><a class="nav-link active" href="reports.html">Reports</a></li>
+        `;
+    }
+}
+
+function initializeCharts() {
+    // Inventory Status Chart
+    const inventoryData = {
+        labels: ['Beef', 'Pork', 'Chicken', 'Lamb', 'Turkey'],
+        datasets: [{
+            label: 'Stock Level (kg)',
+            data: [1200, 800, 1500, 400, 600],
+            backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#198754', '#0dcaf0']
+        }]
+    };
+
+    new Chart(document.getElementById('inventoryChart'), {
+        type: 'bar',
+        data: inventoryData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Sales Performance Chart
+    const salesData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Sales ($)',
+            data: [18500, 22000, 19800, 25600, 23400, 28200],
+            borderColor: '#198754',
+            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: salesData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Order Status Chart
+    const orderData = {
+        labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+        datasets: [{
+            label: 'Orders',
+            data: [15, 28, 35, 185, 8],
+            backgroundColor: ['#ffc107', '#0dcaf0', '#0d6efd', '#198754', '#dc3545']
+        }]
+    };
+
+    new Chart(document.getElementById('orderChart'), {
+        type: 'doughnut',
+        data: orderData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Supplier Performance Chart
+    const supplierData = {
+        labels: ['Premium Meats Co.', 'Fresh Farm Supply', 'Quality Cuts Inc.', 'Local Butchers', 'Organic Farms'],
+        datasets: [{
+            label: 'Delivery Rate (%)',
+            data: [95, 88, 92, 85, 98],
+            backgroundColor: '#17a2b8'
+        }]
+    };
+
+    new Chart(document.getElementById('supplierChart'), {
+        type: 'bar',
+        data: supplierData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+function downloadPDF() {
+    showNotification('Generating PDF report...', 'info');
+    
+    // Simulate PDF generation
+    setTimeout(() => {
+        const link = document.createElement('a');
+        link.href = 'data:application/pdf;base64,JVBERi0xLjQKJdP0zOEKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPD4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIgNzkyXQovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA0NAo+PgpzdHJlYW0KQLQKMC4wNzUgMCA2MTIgNzkyIDYxMiAwIDAgMCA2MTJKS2VuZHN0cmVhbQt4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYKMDAwMDAwMDAwOSAwMDAwMCBuCjAwMDAwMDAwNzQgMDAwMDAgbgowMDAwMDAwMTIwIDAwMDAwIG4KMDAwMDAwMDE3OSAwMDAwMCBuCnRyYWlsZXIKPDwKL1NpemUgNQovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKMjczCiUlRU9GCg==';
+        link.download = 'meatchain-report.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showNotification('Report downloaded successfully!', 'success');
+    }, 2000);
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+</script>
 </body>
 </html>

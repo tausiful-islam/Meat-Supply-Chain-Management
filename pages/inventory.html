@@ -143,6 +143,106 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Production Records Section -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>Production Records by District/Division</h5>
+        </div>
+        <div class="card-body">
+          <!-- Filter Controls -->
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <select id="districtFilter" class="form-select">
+                <option value="">All Districts</option>
+                <option value="dhaka">Dhaka</option>
+                <option value="chittagong">Chittagong</option>
+                <option value="sylhet">Sylhet</option>
+                <option value="rajshahi">Rajshahi</option>
+                <option value="khulna">Khulna</option>
+                <option value="barisal">Barisal</option>
+                <option value="rangpur">Rangpur</option>
+                <option value="mymensingh">Mymensingh</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select id="timeFilter" class="form-select">
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly" selected>Yearly</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <input type="number" id="yearFilter" class="form-control" placeholder="Year" value="2024">
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-success w-100" onclick="loadProductionRecords()">
+                <i class="bi bi-funnel me-1"></i>Filter Records
+              </button>
+            </div>
+          </div>
+
+          <!-- Production Records Table -->
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-success">
+                <tr>
+                  <th>District/Division</th>
+                  <th>Livestock Count</th>
+                  <th>Slaughter Rate (%)</th>
+                  <th>Meat Yield (tons)</th>
+                  <th>Production Volume (tons)</th>
+                  <th>Period</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="productionRecordsBody">
+                <!-- Production records will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Production Summary Cards -->
+          <div class="row mt-4">
+            <div class="col-md-3">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h6 class="text-muted">Total Livestock</h6>
+                  <h4 class="text-success" id="totalLivestock">0</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h6 class="text-muted">Avg Slaughter Rate</h6>
+                  <h4 class="text-info" id="avgSlaughterRate">0%</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h6 class="text-muted">Total Production</h6>
+                  <h4 class="text-warning" id="totalProduction">0 tons</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h6 class="text-muted">Growth Rate</h6>
+                  <h4 class="text-danger" id="growthRate">0%</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Add Product Modal -->
@@ -342,6 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupBrandNavigation();
     loadInventoryTable();
     updateStatistics();
+    loadProductionRecords();
     setupEventListeners();
 });
 
@@ -599,6 +700,141 @@ function showNotification(message, type) {
             notification.parentNode.removeChild(notification);
         }
     }, 5000);
+}
+
+// Production Records Data and Functions
+const productionRecords = [
+    {
+        district: 'Dhaka',
+        livestockCount: 125000,
+        slaughterRate: 15.2,
+        meatYield: 2850,
+        productionVolume: 3200,
+        period: '2024-Q4',
+        trend: '+8.5%'
+    },
+    {
+        district: 'Chittagong',
+        livestockCount: 98000,
+        slaughterRate: 12.8,
+        meatYield: 2240,
+        productionVolume: 2680,
+        period: '2024-Q4',
+        trend: '+5.2%'
+    },
+    {
+        district: 'Sylhet',
+        livestockCount: 67000,
+        slaughterRate: 14.1,
+        meatYield: 1520,
+        productionVolume: 1890,
+        period: '2024-Q4',
+        trend: '+12.3%'
+    },
+    {
+        district: 'Rajshahi',
+        livestockCount: 89000,
+        slaughterRate: 13.7,
+        meatYield: 1980,
+        productionVolume: 2350,
+        period: '2024-Q4',
+        trend: '+3.8%'
+    },
+    {
+        district: 'Khulna',
+        livestockCount: 76000,
+        slaughterRate: 11.9,
+        meatYield: 1650,
+        productionVolume: 1920,
+        period: '2024-Q4',
+        trend: '+7.1%'
+    },
+    {
+        district: 'Barisal',
+        livestockCount: 54000,
+        slaughterRate: 10.5,
+        meatYield: 1180,
+        productionVolume: 1350,
+        period: '2024-Q4',
+        trend: '+4.9%'
+    },
+    {
+        district: 'Rangpur',
+        livestockCount: 82000,
+        slaughterRate: 13.2,
+        meatYield: 1740,
+        productionVolume: 2080,
+        period: '2024-Q4',
+        trend: '+6.7%'
+    },
+    {
+        district: 'Mymensingh',
+        livestockCount: 71000,
+        slaughterRate: 12.4,
+        meatYield: 1560,
+        productionVolume: 1820,
+        period: '2024-Q4',
+        trend: '+9.2%'
+    }
+];
+
+// Load production records
+function loadProductionRecords() {
+    const tableBody = document.getElementById('productionRecordsBody');
+    const districtFilter = document.getElementById('districtFilter').value;
+    const timeFilter = document.getElementById('timeFilter').value;
+    const yearFilter = document.getElementById('yearFilter').value;
+    
+    let filteredRecords = productionRecords;
+    
+    // Apply district filter
+    if (districtFilter) {
+        filteredRecords = filteredRecords.filter(record => 
+            record.district.toLowerCase() === districtFilter
+        );
+    }
+    
+    // Clear table
+    tableBody.innerHTML = '';
+    
+    // Populate table
+    filteredRecords.forEach(record => {
+        const row = document.createElement('tr');
+        const trendColor = record.trend.startsWith('+') ? 'text-success' : 'text-danger';
+        const trendIcon = record.trend.startsWith('+') ? 'bi-arrow-up' : 'bi-arrow-down';
+        
+        row.innerHTML = `
+            <td><strong>${record.district}</strong></td>
+            <td>${record.livestockCount.toLocaleString()}</td>
+            <td>${record.slaughterRate}%</td>
+            <td>${record.meatYield.toLocaleString()} tons</td>
+            <td>${record.productionVolume.toLocaleString()} tons</td>
+            <td>${record.period}</td>
+            <td class="${trendColor}">
+                <i class="bi ${trendIcon} me-1"></i>${record.trend}
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    // Update summary cards
+    updateProductionSummary(filteredRecords);
+}
+
+// Update production summary
+function updateProductionSummary(records) {
+    const totalLivestock = records.reduce((sum, record) => sum + record.livestockCount, 0);
+    const avgSlaughterRate = records.reduce((sum, record) => sum + record.slaughterRate, 0) / records.length;
+    const totalProduction = records.reduce((sum, record) => sum + record.productionVolume, 0);
+    const avgGrowthRate = records.reduce((sum, record) => {
+        const rate = parseFloat(record.trend.replace('%', '').replace('+', ''));
+        return sum + rate;
+    }, 0) / records.length;
+    
+    document.getElementById('totalLivestock').textContent = totalLivestock.toLocaleString();
+    document.getElementById('avgSlaughterRate').textContent = avgSlaughterRate.toFixed(1) + '%';
+    document.getElementById('totalProduction').textContent = totalProduction.toLocaleString() + ' tons';
+    document.getElementById('growthRate').textContent = (avgGrowthRate >= 0 ? '+' : '') + avgGrowthRate.toFixed(1) + '%';
 }
 
 // Initialize tooltips

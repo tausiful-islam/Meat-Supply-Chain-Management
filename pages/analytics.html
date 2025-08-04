@@ -7,6 +7,47 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../assests/Style/style.css">
+  <style>
+    /* Prevent page shaking and chart sizing issues */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      min-height: 250px;
+      max-height: 400px;
+      overflow: hidden;
+    }
+    
+    .chart-container canvas {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    
+    /* Loading state for charts */
+    .chart-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+      background-color: #f8f9fa;
+      border-radius: 0.375rem;
+    }
+    
+    /* Prevent layout shift */
+    .card {
+      min-height: fit-content;
+    }
+    
+    .card-body {
+      min-height: 200px;
+    }
+    
+    /* Smooth transitions */
+    .chart-container,
+    .card,
+    .card-body {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
 </head>
 <body style="background-color: #f8f9fa;">
 
@@ -134,7 +175,9 @@
           <h6 class="m-0 font-weight-bold text-primary">Demand vs Supply Analysis (Monthly)</h6>
         </div>
         <div class="card-body">
-          <canvas id="demandSupplyChart" width="400" height="200"></canvas>
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="demandSupplyChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -146,7 +189,9 @@
           <h6 class="m-0 font-weight-bold text-primary">Production by Meat Type</h6>
         </div>
         <div class="card-body">
-          <canvas id="meatTypeChart" width="400" height="200"></canvas>
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="meatTypeChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -161,7 +206,9 @@
           <h6 class="m-0 font-weight-bold text-primary">Price Trend Analysis</h6>
         </div>
         <div class="card-body">
-          <canvas id="priceChart" width="400" height="250"></canvas>
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="priceChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -173,7 +220,9 @@
           <h6 class="m-0 font-weight-bold text-primary">Regional Consumption Patterns</h6>
         </div>
         <div class="card-body">
-          <canvas id="regionalChart" width="400" height="250"></canvas>
+          <div class="chart-container" style="position: relative; height: 300px;">
+            <canvas id="regionalChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -310,6 +359,454 @@
       </div>
     </div>
   </div>
+
+  <!-- Historical Price Analysis Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <i class="bi bi-graph-up-arrow me-2"></i>Historical Price Analysis
+          </h6>
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="priceTimeRange" style="width: auto;">
+              <option value="1y">Last 12 Months</option>
+              <option value="2y">Last 2 Years</option>
+              <option value="5y">Last 5 Years</option>
+            </select>
+            <select class="form-select form-select-sm" id="priceRegion" style="width: auto;">
+              <option value="all">All Regions</option>
+              <option value="north">Northern Districts</option>
+              <option value="south">Southern Districts</option>
+              <option value="east">Eastern Districts</option>
+              <option value="west">Western Districts</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Price Trend Charts Row -->
+          <div class="row mb-4">
+            <div class="col-lg-8">
+              <h6 class="text-muted mb-3">Wholesale vs Retail Price Trends</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="historicalPriceChart"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <h6 class="text-muted mb-3">Seasonal Patterns</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="seasonalChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price Statistics Cards -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-success mb-1" id="avgWholesalePrice">$8.45</h5>
+                  <small class="text-muted">Avg Wholesale Price/kg</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-primary mb-1" id="avgRetailPrice">$12.80</h5>
+                  <small class="text-muted">Avg Retail Price/kg</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-warning mb-1" id="priceVolatility">15.3%</h5>
+                  <small class="text-muted">Price Volatility</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-info mb-1" id="marginSpread">34.1%</h5>
+                  <small class="text-muted">Wholesale-Retail Margin</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Price Table -->
+          <div class="row">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">Detailed Price History</h6>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product Type</th>
+                      <th>Region</th>
+                      <th>Period</th>
+                      <th>Wholesale Price</th>
+                      <th>Retail Price</th>
+                      <th>YoY Change</th>
+                      <th>Seasonal Trend</th>
+                    </tr>
+                  </thead>
+                  <tbody id="priceHistoryTable">
+                    <!-- Data will be populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Regional Price Comparison -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">Regional Price Fluctuation Analysis</h6>
+              <div class="chart-container" style="position: relative; height: 250px;">
+                <canvas id="regionalPriceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price Elasticity Analysis Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <i class="bi bi-calculator me-2"></i>Price Elasticity Analysis
+          </h6>
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="elasticityProduct" style="width: auto;">
+              <option value="all">All Products</option>
+              <option value="beef">Beef</option>
+              <option value="lamb">Lamb</option>
+              <option value="fish">Fish</option>
+              <option value="pork">Pork</option>
+              <option value="chicken">Chicken</option>
+            </select>
+            <select class="form-select form-select-sm" id="elasticityPeriod" style="width: auto;">
+              <option value="current">Current Quarter</option>
+              <option value="1y">Last Year</option>
+              <option value="2y">Last 2 Years</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Elasticity Overview Cards -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-primary mb-1" id="avgElasticity">-0.85</h5>
+                  <small class="text-muted">Average Elasticity</small>
+                  <div class="mt-1">
+                    <small class="badge bg-info">Inelastic</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-success mb-1" id="mostElastic">Fish</h5>
+                  <small class="text-muted">Most Elastic Product</small>
+                  <div class="mt-1">
+                    <small class="text-success">-1.32</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-warning mb-1" id="leastElastic">Beef</h5>
+                  <small class="text-muted">Least Elastic Product</small>
+                  <div class="mt-1">
+                    <small class="text-warning">-0.42</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-info mb-1" id="revenueImpact">+8.3%</h5>
+                  <small class="text-muted">Revenue Impact</small>
+                  <div class="mt-1">
+                    <small class="text-info">Price Optimization</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Elasticity Charts -->
+          <div class="row mb-4">
+            <div class="col-lg-8">
+              <h6 class="text-muted mb-3">Price-Demand Elasticity by Product</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="elasticityChart"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <h6 class="text-muted mb-3">Elasticity Classification</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="elasticityTypeChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Elasticity Data Table -->
+          <div class="row">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">Detailed Elasticity Analysis</h6>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th>Price Elasticity</th>
+                      <th>Classification</th>
+                      <th>10% Price Increase Impact</th>
+                      <th>Optimal Price Point</th>
+                      <th>Revenue Potential</th>
+                      <th>Market Sensitivity</th>
+                    </tr>
+                  </thead>
+                  <tbody id="elasticityTable">
+                    <!-- Data will be populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Insights -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="alert alert-info border-0">
+                <h6 class="alert-heading">
+                  <i class="bi bi-lightbulb me-2"></i>Key Elasticity Insights
+                </h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <ul class="mb-0">
+                      <li><strong>Beef</strong> shows lowest elasticity (-0.42) - premium pricing opportunities</li>
+                      <li><strong>Fish</strong> is most price-sensitive (-1.32) - competitive pricing essential</li>
+                      <li><strong>Chicken</strong> has moderate elasticity (-0.78) - balanced pricing strategy</li>
+                    </ul>
+                  </div>
+                  <div class="col-md-6">
+                    <ul class="mb-0">
+                      <li>Cross-elasticity analysis shows beef-lamb substitution rate of 0.23</li>
+                      <li>Income elasticity highest for premium cuts (+1.45)</li>
+                      <li>Seasonal variations affect elasticity by up to 15%</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supply vs Demand Analysis Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">
+            <i class="bi bi-bar-chart-line me-2"></i>Supply vs Demand Analysis & Business Insights
+          </h6>
+          <div class="d-flex gap-2">
+            <select class="form-select form-select-sm" id="supplyDemandTimeframe" style="width: auto;">
+              <option value="current">Current Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+            <button class="btn btn-sm btn-outline-primary" onclick="generateBusinessInsights()">
+              <i class="bi bi-lightbulb me-1"></i>AI Insights
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Supply-Demand Balance Overview -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-success mb-1" id="totalSupply">1,250K</h5>
+                  <small class="text-muted">Total Supply (tons)</small>
+                  <div class="mt-1">
+                    <small class="text-success"><i class="bi bi-arrow-up"></i> +12.5%</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-primary mb-1" id="totalDemand">1,180K</h5>
+                  <small class="text-muted">Total Demand (tons)</small>
+                  <div class="mt-1">
+                    <small class="text-primary"><i class="bi bi-arrow-up"></i> +8.7%</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-warning mb-1" id="surplusDeficit">+70K</h5>
+                  <small class="text-muted">Surplus/Deficit (tons)</small>
+                  <div class="mt-1">
+                    <small class="badge bg-success">Surplus</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light border-0">
+                <div class="card-body text-center">
+                  <h5 class="text-info mb-1" id="balanceRatio">106%</h5>
+                  <small class="text-muted">Supply/Demand Ratio</small>
+                  <div class="mt-1">
+                    <small class="text-info">Well Balanced</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Supply vs Demand Charts -->
+          <div class="row mb-4">
+            <div class="col-lg-8">
+              <h6 class="text-muted mb-3">Supply vs Demand Trends</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="supplyDemandChart"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <h6 class="text-muted mb-3">Market Balance Status</h6>
+              <div class="chart-container" style="position: relative; height: 300px;">
+                <canvas id="balanceStatusChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product-wise Supply-Demand Analysis -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">Product-wise Supply-Demand Analysis</h6>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th>Supply (tons)</th>
+                      <th>Demand (tons)</th>
+                      <th>Balance</th>
+                      <th>Market Status</th>
+                      <th>Price Impact</th>
+                      <th>Business Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="supplyDemandTable">
+                    <!-- Data will be populated by JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Insights and Recommendations -->
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card bg-light border-0">
+                <div class="card-header bg-white">
+                  <h6 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Strategic Business Insights</h6>
+                </div>
+                <div class="card-body">
+                  <div id="businessInsights">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <h6 class="text-success"><i class="bi bi-check-circle me-2"></i>Opportunities</h6>
+                        <ul class="list-unstyled small">
+                          <li class="mb-2">• Fish demand exceeds supply by 15% - expand aquaculture operations</li>
+                          <li class="mb-2">• Lamb shows strong surplus - export opportunity to neighboring regions</li>
+                          <li class="mb-2">• Premium beef segment underserved - target high-end market</li>
+                          <li class="mb-2">• Seasonal demand patterns create pricing opportunities</li>
+                        </ul>
+                      </div>
+                      <div class="col-md-6">
+                        <h6 class="text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Risks & Actions</h6>
+                        <ul class="list-unstyled small">
+                          <li class="mb-2">• Pork oversupply may lead to 8% price drop - reduce production</li>
+                          <li class="mb-2">• Supply chain bottlenecks in Eastern region - invest in logistics</li>
+                          <li class="mb-2">• Weather conditions affecting feed supply - secure alternative sources</li>
+                          <li class="mb-2">• Regulatory changes may impact import/export quotas</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card bg-light border-0">
+                <div class="card-header bg-white">
+                  <h6 class="mb-0"><i class="bi bi-target me-2"></i>Key Performance Indicators</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="small">Market Efficiency</span>
+                    <span class="badge bg-success">94%</span>
+                  </div>
+                  <div class="progress mb-3" style="height: 6px;">
+                    <div class="progress-bar bg-success" style="width: 94%"></div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="small">Supply Stability</span>
+                    <span class="badge bg-info">87%</span>
+                  </div>
+                  <div class="progress mb-3" style="height: 6px;">
+                    <div class="progress-bar bg-info" style="width: 87%"></div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="small">Demand Predictability</span>
+                    <span class="badge bg-warning">76%</span>
+                  </div>
+                  <div class="progress mb-3" style="height: 6px;">
+                    <div class="progress-bar bg-warning" style="width: 76%"></div>
+                  </div>
+                  
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="small">Profit Optimization</span>
+                    <span class="badge bg-primary">91%</span>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-primary" style="width: 91%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Bootstrap JS -->
@@ -320,10 +817,15 @@
 // Initialize charts when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setupBrandNavigation();
-    initializeDemandSupplyChart();
-    initializeMeatTypeChart();
-    initializePriceChart();
-    initializeRegionalChart();
+    
+    // Initialize charts with slight delays to prevent page shaking
+    setTimeout(initializeDemandSupplyChart, 100);
+    setTimeout(initializeMeatTypeChart, 200);
+    setTimeout(initializePriceChart, 300);
+    setTimeout(initializeRegionalChart, 400);
+    setTimeout(initializeHistoricalPriceAnalysis, 500);
+    setTimeout(initializePriceElasticityAnalysis, 600);
+    setTimeout(initializeSupplyDemandAnalysis, 700);
 });
 
 // Setup brand navigation based on user login status
@@ -537,6 +1039,663 @@ function showNotification(message, type) {
             notification.parentNode.removeChild(notification);
         }
     }, 5000);
+}
+
+// Historical Price Analysis Functions
+let historicalPriceChart, seasonalChart, regionalPriceChart;
+
+function initializeHistoricalPriceAnalysis() {
+    initializeHistoricalPriceChart();
+    initializeSeasonalChart();
+    initializeRegionalPriceChart();
+    loadPriceHistoryTable();
+    updatePriceStatistics();
+    
+    // Add event listeners for filters
+    document.getElementById('priceTimeRange').addEventListener('change', updateHistoricalPriceAnalysis);
+    document.getElementById('priceRegion').addEventListener('change', updateHistoricalPriceAnalysis);
+}
+
+function initializeHistoricalPriceChart() {
+    const ctx = document.getElementById('historicalPriceChart').getContext('2d');
+    historicalPriceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Wholesale Price',
+                data: [8.2, 8.5, 8.1, 7.9, 8.3, 8.7, 9.1, 9.3, 8.9, 8.4, 8.2, 8.6],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                tension: 0.1
+            }, {
+                label: 'Retail Price',
+                data: [12.1, 12.8, 12.3, 11.9, 12.5, 13.2, 13.8, 14.1, 13.5, 12.7, 12.4, 13.0],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Price ($/kg)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': $' + context.parsed.y.toFixed(2) + '/kg';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeSeasonalChart() {
+    const ctx = document.getElementById('seasonalChart').getContext('2d');
+    seasonalChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Spring', 'Summer', 'Fall', 'Winter'],
+            datasets: [{
+                label: 'Price Variation %',
+                data: [5.2, 15.8, 8.1, -3.4],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                pointBackgroundColor: 'rgb(54, 162, 235)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(54, 162, 235)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function initializeRegionalPriceChart() {
+    const ctx = document.getElementById('regionalPriceChart').getContext('2d');
+    regionalPriceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Northern Districts', 'Southern Districts', 'Eastern Districts', 'Western Districts'],
+            datasets: [{
+                label: 'Average Price ($/kg)',
+                data: [8.45, 7.89, 9.12, 8.67],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 205, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 205, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Price ($/kg)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function loadPriceHistoryTable() {
+    const priceData = [
+        {
+            product: 'Beef',
+            region: 'Northern Districts',
+            period: 'Q4 2023',
+            wholesale: 8.45,
+            retail: 12.80,
+            yoyChange: '+12.3%',
+            trend: 'Rising'
+        },
+        {
+            product: 'Lamb',
+            region: 'Southern Districts',
+            period: 'Q4 2023',
+            wholesale: 9.20,
+            retail: 14.50,
+            yoyChange: '+8.7%',
+            trend: 'Stable'
+        },
+        {
+            product: 'Fish',
+            region: 'Eastern Districts',
+            period: 'Q4 2023',
+            wholesale: 7.80,
+            retail: 11.20,
+            yoyChange: '+15.6%',
+            trend: 'Rising'
+        },
+        {
+            product: 'Pork',
+            region: 'Western Districts',
+            period: 'Q4 2023',
+            wholesale: 6.50,
+            retail: 9.80,
+            yoyChange: '-2.3%',
+            trend: 'Declining'
+        },
+        {
+            product: 'Chicken',
+            region: 'All Regions',
+            period: 'Q4 2023',
+            wholesale: 4.20,
+            retail: 6.90,
+            yoyChange: '+5.1%',
+            trend: 'Stable'
+        }
+    ];
+
+    const tableBody = document.getElementById('priceHistoryTable');
+    tableBody.innerHTML = '';
+
+    priceData.forEach(item => {
+        const row = document.createElement('tr');
+        const changeClass = item.yoyChange.startsWith('+') ? 'text-success' : 
+                           item.yoyChange.startsWith('-') ? 'text-danger' : 'text-muted';
+        const trendBadge = item.trend === 'Rising' ? 'bg-success' : 
+                          item.trend === 'Declining' ? 'bg-danger' : 'bg-secondary';
+        
+        row.innerHTML = `
+            <td><span class="badge bg-primary">${item.product}</span></td>
+            <td>${item.region}</td>
+            <td>${item.period}</td>
+            <td>$${item.wholesale.toFixed(2)}</td>
+            <td>$${item.retail.toFixed(2)}</td>
+            <td><span class="${changeClass}">${item.yoyChange}</span></td>
+            <td><span class="badge ${trendBadge}">${item.trend}</span></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function updatePriceStatistics() {
+    // Update price statistics cards with calculated values
+    document.getElementById('avgWholesalePrice').textContent = '$8.45';
+    document.getElementById('avgRetailPrice').textContent = '$12.80';
+    document.getElementById('priceVolatility').textContent = '15.3%';
+    document.getElementById('marginSpread').textContent = '34.1%';
+}
+
+function updateHistoricalPriceAnalysis() {
+    const timeRange = document.getElementById('priceTimeRange').value;
+    const region = document.getElementById('priceRegion').value;
+    
+    // Update charts based on selected filters
+    // This would typically fetch new data from backend
+    console.log(`Updating historical price analysis for ${timeRange} in ${region} region`);
+    
+    // For demo purposes, just refresh the existing data
+    loadPriceHistoryTable();
+    updatePriceStatistics();
+}
+
+// Price Elasticity Analysis Functions
+let elasticityChart, elasticityTypeChart;
+
+function initializePriceElasticityAnalysis() {
+    initializeElasticityChart();
+    initializeElasticityTypeChart();
+    loadElasticityTable();
+    updateElasticityStatistics();
+    
+    // Add event listeners for filters
+    document.getElementById('elasticityProduct').addEventListener('change', updateElasticityAnalysis);
+    document.getElementById('elasticityPeriod').addEventListener('change', updateElasticityAnalysis);
+}
+
+function initializeElasticityChart() {
+    const ctx = document.getElementById('elasticityChart').getContext('2d');
+    elasticityChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Beef',
+                data: [
+                    {x: 10, y: -5}, {x: 15, y: -8}, {x: 20, y: -12}, {x: 25, y: -15}
+                ],
+                backgroundColor: 'rgba(220, 53, 69, 0.6)',
+                borderColor: 'rgba(220, 53, 69, 1)',
+                borderWidth: 2
+            }, {
+                label: 'Lamb',
+                data: [
+                    {x: 8, y: -6}, {x: 12, y: -9}, {x: 18, y: -14}, {x: 22, y: -18}
+                ],
+                backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                borderColor: 'rgba(255, 193, 7, 1)',
+                borderWidth: 2
+            }, {
+                label: 'Fish',
+                data: [
+                    {x: 5, y: -8}, {x: 10, y: -15}, {x: 15, y: -25}, {x: 20, y: -32}
+                ],
+                backgroundColor: 'rgba(13, 202, 240, 0.6)',
+                borderColor: 'rgba(13, 202, 240, 1)',
+                borderWidth: 2
+            }, {
+                label: 'Chicken',
+                data: [
+                    {x: 6, y: -5}, {x: 10, y: -9}, {x: 15, y: -14}, {x: 18, y: -18}
+                ],
+                backgroundColor: 'rgba(25, 135, 84, 0.6)',
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Price Increase (%)'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Demand Change (%)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const elasticity = (context.parsed.y / context.parsed.x).toFixed(2);
+                            return `${context.dataset.label}: Elasticity = ${elasticity}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeElasticityTypeChart() {
+    const ctx = document.getElementById('elasticityTypeChart').getContext('2d');
+    elasticityTypeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Inelastic (< -1.0)', 'Unit Elastic (-1.0)', 'Elastic (> -1.0)'],
+            datasets: [{
+                data: [3, 0, 2],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(25, 135, 84, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function loadElasticityTable() {
+    const elasticityData = [
+        {
+            product: 'Beef',
+            elasticity: -0.42,
+            classification: 'Inelastic',
+            priceImpact: '-4.2% demand',
+            optimalPrice: '$38.50',
+            revenuePotential: '+12.5%',
+            sensitivity: 'Low'
+        },
+        {
+            product: 'Lamb',
+            elasticity: -0.68,
+            classification: 'Inelastic',
+            priceImpact: '-6.8% demand',
+            optimalPrice: '$44.20',
+            revenuePotential: '+8.3%',
+            sensitivity: 'Medium'
+        },
+        {
+            product: 'Fish',
+            elasticity: -1.32,
+            classification: 'Elastic',
+            priceImpact: '-13.2% demand',
+            optimalPrice: '$26.80',
+            revenuePotential: '-2.1%',
+            sensitivity: 'High'
+        },
+        {
+            product: 'Pork',
+            elasticity: -0.89,
+            classification: 'Inelastic',
+            priceImpact: '-8.9% demand',
+            optimalPrice: '$19.75',
+            revenuePotential: '+4.7%',
+            sensitivity: 'Medium'
+        },
+        {
+            product: 'Chicken',
+            elasticity: -0.78,
+            classification: 'Inelastic',
+            priceImpact: '-7.8% demand',
+            optimalPrice: '$14.20',
+            revenuePotential: '+6.1%',
+            sensitivity: 'Medium'
+        }
+    ];
+
+    const tableBody = document.getElementById('elasticityTable');
+    tableBody.innerHTML = '';
+
+    elasticityData.forEach(item => {
+        const row = document.createElement('tr');
+        const classificationBadge = item.classification === 'Elastic' ? 'bg-success' : 'bg-warning';
+        const sensitivityClass = item.sensitivity === 'High' ? 'text-danger' : 
+                               item.sensitivity === 'Medium' ? 'text-warning' : 'text-success';
+        const revenueClass = item.revenuePotential.startsWith('+') ? 'text-success' : 'text-danger';
+        
+        row.innerHTML = `
+            <td><span class="badge bg-primary">${item.product}</span></td>
+            <td><strong>${item.elasticity}</strong></td>
+            <td><span class="badge ${classificationBadge}">${item.classification}</span></td>
+            <td>${item.priceImpact}</td>
+            <td><strong>${item.optimalPrice}</strong></td>
+            <td><span class="${revenueClass}">${item.revenuePotential}</span></td>
+            <td><span class="${sensitivityClass}">${item.sensitivity}</span></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function updateElasticityStatistics() {
+    // Update elasticity statistics cards
+    document.getElementById('avgElasticity').textContent = '-0.85';
+    document.getElementById('mostElastic').textContent = 'Fish';
+    document.getElementById('leastElastic').textContent = 'Beef';
+    document.getElementById('revenueImpact').textContent = '+8.3%';
+}
+
+function updateElasticityAnalysis() {
+    const product = document.getElementById('elasticityProduct').value;
+    const period = document.getElementById('elasticityPeriod').value;
+    
+    console.log(`Updating elasticity analysis for ${product} in ${period} period`);
+    
+    // For demo purposes, just refresh the existing data
+    loadElasticityTable();
+    updateElasticityStatistics();
+}
+
+// Supply vs Demand Analysis Functions
+let supplyDemandChart, balanceStatusChart;
+
+function initializeSupplyDemandAnalysis() {
+    initializeSupplyDemandChart();
+    initializeBalanceStatusChart();
+    loadSupplyDemandTable();
+    updateSupplyDemandStatistics();
+    
+    // Add event listener for timeframe filter
+    document.getElementById('supplyDemandTimeframe').addEventListener('change', updateSupplyDemandAnalysis);
+}
+
+function initializeSupplyDemandChart() {
+    const ctx = document.getElementById('supplyDemandChart').getContext('2d');
+    supplyDemandChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Supply',
+                data: [920, 980, 1050, 1120, 1180, 1220, 1280, 1310, 1290, 1240, 1200, 1250],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                tension: 0.1,
+                fill: false
+            }, {
+                label: 'Demand',
+                data: [890, 920, 980, 1040, 1090, 1140, 1200, 1220, 1190, 1160, 1140, 1180],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Volume (K tons)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + 'K tons';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeBalanceStatusChart() {
+    const ctx = document.getElementById('balanceStatusChart').getContext('2d');
+    balanceStatusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Balanced Market', 'Surplus', 'Deficit', 'Critical Shortage'],
+            datasets: [{
+                data: [60, 25, 12, 3],
+                backgroundColor: [
+                    'rgba(25, 135, 84, 0.8)',
+                    'rgba(13, 202, 240, 0.8)',
+                    'rgba(255, 193, 7, 0.8)',
+                    'rgba(220, 53, 69, 0.8)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function loadSupplyDemandTable() {
+    const supplyDemandData = [
+        {
+            product: 'Beef',
+            supply: 320,
+            demand: 310,
+            balance: '+10',
+            status: 'Balanced',
+            priceImpact: 'Stable',
+            action: 'Maintain Production'
+        },
+        {
+            product: 'Lamb',
+            supply: 180,
+            demand: 155,
+            balance: '+25',
+            status: 'Surplus',
+            priceImpact: 'Slight Decrease',
+            action: 'Export Opportunity'
+        },
+        {
+            product: 'Fish',
+            supply: 280,
+            demand: 320,
+            balance: '-40',
+            status: 'Deficit',
+            priceImpact: 'Price Increase',
+            action: 'Increase Production'
+        },
+        {
+            product: 'Pork',
+            supply: 220,
+            demand: 190,
+            balance: '+30',
+            status: 'Surplus',
+            priceImpact: 'Price Drop',
+            action: 'Reduce Production'
+        },
+        {
+            product: 'Chicken',
+            supply: 250,
+            demand: 205,
+            balance: '+45',
+            status: 'High Surplus',
+            priceImpact: 'Significant Drop',
+            action: 'Market Expansion'
+        }
+    ];
+
+    const tableBody = document.getElementById('supplyDemandTable');
+    tableBody.innerHTML = '';
+
+    supplyDemandData.forEach(item => {
+        const row = document.createElement('tr');
+        const balanceClass = item.balance.startsWith('+') ? 'text-success' : 'text-danger';
+        const statusBadge = item.status === 'Balanced' ? 'bg-success' : 
+                           item.status.includes('Surplus') ? 'bg-info' : 'bg-warning';
+        const priceClass = item.priceImpact.includes('Increase') ? 'text-success' :
+                          item.priceImpact.includes('Drop') || item.priceImpact.includes('Decrease') ? 'text-danger' : 'text-muted';
+        
+        row.innerHTML = `
+            <td><span class="badge bg-primary">${item.product}</span></td>
+            <td>${item.supply}K</td>
+            <td>${item.demand}K</td>
+            <td><span class="${balanceClass}"><strong>${item.balance}K</strong></span></td>
+            <td><span class="badge ${statusBadge}">${item.status}</span></td>
+            <td><span class="${priceClass}">${item.priceImpact}</span></td>
+            <td><small>${item.action}</small></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function updateSupplyDemandStatistics() {
+    // Update supply-demand statistics cards
+    document.getElementById('totalSupply').textContent = '1,250K';
+    document.getElementById('totalDemand').textContent = '1,180K';
+    document.getElementById('surplusDeficit').textContent = '+70K';
+    document.getElementById('balanceRatio').textContent = '106%';
+}
+
+function updateSupplyDemandAnalysis() {
+    const timeframe = document.getElementById('supplyDemandTimeframe').value;
+    
+    console.log(`Updating supply-demand analysis for ${timeframe}`);
+    
+    // For demo purposes, just refresh the existing data
+    loadSupplyDemandTable();
+    updateSupplyDemandStatistics();
+}
+
+function generateBusinessInsights() {
+    // Simulate AI-generated business insights
+    const insights = [
+        "AI Analysis: Current market conditions favor expanding fish production by 20% to meet growing demand.",
+        "Recommendation: Consider strategic partnerships with Northern districts to balance regional supply disparities.",
+        "Market Opportunity: Premium organic segment shows 35% higher profit margins with increasing consumer interest.",
+        "Risk Alert: Seasonal demand fluctuations suggest building strategic reserves of 15% above baseline."
+    ];
+    
+    const insightsContainer = document.getElementById('businessInsights');
+    const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+    
+    // Add a new insight temporarily
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success border-0 mt-3';
+    alertDiv.innerHTML = `
+        <h6 class="alert-heading"><i class="bi bi-robot me-2"></i>AI Generated Insight</h6>
+        <p class="mb-0">${randomInsight}</p>
+    `;
+    
+    insightsContainer.appendChild(alertDiv);
+    
+    // Remove after 10 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 10000);
 }
 </script>
 

@@ -184,6 +184,15 @@
             </div>
           </div>
 
+          <!-- Add New Record Button -->
+          <div class="row mb-3">
+            <div class="col-12 text-end">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductionRecordModal">
+                <i class="bi bi-plus-circle me-2"></i>Add New Production Record
+              </button>
+            </div>
+          </div>
+
           <!-- Production Records Table -->
           <div class="table-responsive">
             <table class="table table-striped table-hover">
@@ -195,7 +204,7 @@
                   <th>Meat Yield (tons)</th>
                   <th>Production Volume (tons)</th>
                   <th>Period</th>
-                  <th>Trend</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="productionRecordsBody">
@@ -371,6 +380,71 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-warning">
             <i class="bi bi-check-circle me-1"></i>Update Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Production Record Modal -->
+<div class="modal fade" id="addProductionRecordModal" tabindex="-1" aria-labelledby="addProductionRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="addProductionRecordModalLabel">
+          <i class="bi bi-clipboard-data me-2"></i>Add/Edit Production Record
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="productionRecordForm" onsubmit="event.preventDefault(); saveProductionRecord();">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">District/Division</label>
+              <select id="recordDistrict" class="form-select" required>
+                <option value="">Select District</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chittagong">Chittagong</option>
+                <option value="Sylhet">Sylhet</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Barisal">Barisal</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Period</label>
+              <input type="text" id="recordPeriod" class="form-control" placeholder="e.g., 2024-Q4" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Livestock Count</label>
+              <input type="number" id="recordLivestockCount" class="form-control" min="0" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Slaughter Rate (%)</label>
+              <input type="number" id="recordSlaughterRate" class="form-control" step="0.1" min="0" max="100" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Meat Yield (tons)</label>
+              <input type="number" id="recordMeatYield" class="form-control" step="0.1" min="0" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Production Volume (tons)</label>
+              <input type="number" id="recordProductionVolume" class="form-control" step="0.1" min="0" required>
+            </div>
+          </div>
+          <input type="hidden" id="editingIndex" value="-1">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check-circle me-1"></i>Save Record
           </button>
         </div>
       </form>
@@ -710,8 +784,7 @@ const productionRecords = [
         slaughterRate: 15.2,
         meatYield: 2850,
         productionVolume: 3200,
-        period: '2024-Q4',
-        trend: '+8.5%'
+        period: '2024-Q4'
     },
     {
         district: 'Chittagong',
@@ -719,8 +792,7 @@ const productionRecords = [
         slaughterRate: 12.8,
         meatYield: 2240,
         productionVolume: 2680,
-        period: '2024-Q4',
-        trend: '+5.2%'
+        period: '2024-Q4'
     },
     {
         district: 'Sylhet',
@@ -728,8 +800,7 @@ const productionRecords = [
         slaughterRate: 14.1,
         meatYield: 1520,
         productionVolume: 1890,
-        period: '2024-Q4',
-        trend: '+12.3%'
+        period: '2024-Q4'
     },
     {
         district: 'Rajshahi',
@@ -737,8 +808,7 @@ const productionRecords = [
         slaughterRate: 13.7,
         meatYield: 1980,
         productionVolume: 2350,
-        period: '2024-Q4',
-        trend: '+3.8%'
+        period: '2024-Q4'
     },
     {
         district: 'Khulna',
@@ -746,8 +816,7 @@ const productionRecords = [
         slaughterRate: 11.9,
         meatYield: 1650,
         productionVolume: 1920,
-        period: '2024-Q4',
-        trend: '+7.1%'
+        period: '2024-Q4'
     },
     {
         district: 'Barisal',
@@ -755,8 +824,7 @@ const productionRecords = [
         slaughterRate: 10.5,
         meatYield: 1180,
         productionVolume: 1350,
-        period: '2024-Q4',
-        trend: '+4.9%'
+        period: '2024-Q4'
     },
     {
         district: 'Rangpur',
@@ -764,8 +832,7 @@ const productionRecords = [
         slaughterRate: 13.2,
         meatYield: 1740,
         productionVolume: 2080,
-        period: '2024-Q4',
-        trend: '+6.7%'
+        period: '2024-Q4'
     },
     {
         district: 'Mymensingh',
@@ -773,8 +840,7 @@ const productionRecords = [
         slaughterRate: 12.4,
         meatYield: 1560,
         productionVolume: 1820,
-        period: '2024-Q4',
-        trend: '+9.2%'
+        period: '2024-Q4'
     }
 ];
 
@@ -798,10 +864,8 @@ function loadProductionRecords() {
     tableBody.innerHTML = '';
     
     // Populate table
-    filteredRecords.forEach(record => {
+    filteredRecords.forEach((record, index) => {
         const row = document.createElement('tr');
-        const trendColor = record.trend.startsWith('+') ? 'text-success' : 'text-danger';
-        const trendIcon = record.trend.startsWith('+') ? 'bi-arrow-up' : 'bi-arrow-down';
         
         row.innerHTML = `
             <td><strong>${record.district}</strong></td>
@@ -810,8 +874,13 @@ function loadProductionRecords() {
             <td>${record.meatYield.toLocaleString()} tons</td>
             <td>${record.productionVolume.toLocaleString()} tons</td>
             <td>${record.period}</td>
-            <td class="${trendColor}">
-                <i class="bi ${trendIcon} me-1"></i>${record.trend}
+            <td>
+                <button class="btn btn-sm btn-outline-primary me-2" onclick="editProductionRecord(${index})" title="Edit Record">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteProductionRecord(${index})" title="Delete Record">
+                    <i class="bi bi-trash"></i>
+                </button>
             </td>
         `;
         tableBody.appendChild(row);
@@ -826,15 +895,94 @@ function updateProductionSummary(records) {
     const totalLivestock = records.reduce((sum, record) => sum + record.livestockCount, 0);
     const avgSlaughterRate = records.reduce((sum, record) => sum + record.slaughterRate, 0) / records.length;
     const totalProduction = records.reduce((sum, record) => sum + record.productionVolume, 0);
-    const avgGrowthRate = records.reduce((sum, record) => {
-        const rate = parseFloat(record.trend.replace('%', '').replace('+', ''));
-        return sum + rate;
-    }, 0) / records.length;
+    const avgYield = records.reduce((sum, record) => sum + record.meatYield, 0) / records.length;
     
     document.getElementById('totalLivestock').textContent = totalLivestock.toLocaleString();
     document.getElementById('avgSlaughterRate').textContent = avgSlaughterRate.toFixed(1) + '%';
     document.getElementById('totalProduction').textContent = totalProduction.toLocaleString() + ' tons';
-    document.getElementById('growthRate').textContent = (avgGrowthRate >= 0 ? '+' : '') + avgGrowthRate.toFixed(1) + '%';
+    
+    // Update average yield if there's a card for it, otherwise we'll add it to the growth rate card
+    const growthRateElement = document.getElementById('growthRate');
+    if (growthRateElement) {
+        growthRateElement.textContent = avgYield.toFixed(0) + ' tons';
+        // Update the label too if possible
+        const growthRateLabel = growthRateElement.parentElement.querySelector('.text-muted');
+        if (growthRateLabel) {
+            growthRateLabel.textContent = 'Avg Meat Yield';
+        }
+    }
+}
+
+// Production record management functions
+function editProductionRecord(index) {
+    const record = productionRecords[index];
+    
+    // Fill the modal with existing data
+    document.getElementById('recordDistrict').value = record.district;
+    document.getElementById('recordLivestockCount').value = record.livestockCount;
+    document.getElementById('recordSlaughterRate').value = record.slaughterRate;
+    document.getElementById('recordMeatYield').value = record.meatYield;
+    document.getElementById('recordProductionVolume').value = record.productionVolume;
+    document.getElementById('recordPeriod').value = record.period;
+    
+    // Store the index for updating
+    document.getElementById('editingIndex').value = index;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('addProductionRecordModal'));
+    modal.show();
+}
+
+function deleteProductionRecord(index) {
+    if (confirm('Are you sure you want to delete this production record?')) {
+        productionRecords.splice(index, 1);
+        loadProductionRecords();
+        showNotification('Production record deleted successfully!', 'success');
+    }
+}
+
+function saveProductionRecord() {
+    const district = document.getElementById('recordDistrict').value;
+    const livestockCount = parseInt(document.getElementById('recordLivestockCount').value);
+    const slaughterRate = parseFloat(document.getElementById('recordSlaughterRate').value);
+    const meatYield = parseFloat(document.getElementById('recordMeatYield').value);
+    const productionVolume = parseFloat(document.getElementById('recordProductionVolume').value);
+    const period = document.getElementById('recordPeriod').value;
+    const editingIndex = document.getElementById('editingIndex').value;
+    
+    // Validation
+    if (!district || !livestockCount || !slaughterRate || !meatYield || !productionVolume || !period) {
+        showNotification('Please fill in all fields!', 'error');
+        return;
+    }
+    
+    const recordData = {
+        district: district,
+        livestockCount: livestockCount,
+        slaughterRate: slaughterRate,
+        meatYield: meatYield,
+        productionVolume: productionVolume,
+        period: period
+    };
+    
+    if (editingIndex !== '' && editingIndex !== '-1') {
+        // Update existing record
+        productionRecords[parseInt(editingIndex)] = recordData;
+        showNotification('Production record updated successfully!', 'success');
+    } else {
+        // Add new record
+        productionRecords.push(recordData);
+        showNotification('Production record added successfully!', 'success');
+    }
+    
+    // Close modal and refresh table
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addProductionRecordModal'));
+    modal.hide();
+    loadProductionRecords();
+    
+    // Reset form
+    document.getElementById('productionRecordForm').reset();
+    document.getElementById('editingIndex').value = '-1';
 }
 
 // Initialize tooltips

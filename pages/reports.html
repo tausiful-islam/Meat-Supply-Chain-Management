@@ -189,7 +189,7 @@ function setupBrandNavigation() {
     const brandLink = document.getElementById('brandLink');
     
     if (user) {
-        // User is logged in, redirect to appropriate dashboard
+      
         if (user.role === 'admin') {
             brandLink.href = 'admin_dashboard.html';
         } else if (user.role === 'customer') {
@@ -219,7 +219,7 @@ function loadNavigation() {
 }
 
 function initializeCharts() {
-    // Inventory Status Chart
+    
     const inventoryData = {
         labels: ['Beef', 'Pork', 'Chicken', 'Lamb', 'Turkey'],
         datasets: [{
@@ -241,7 +241,7 @@ function initializeCharts() {
         }
     });
 
-    // Sales Performance Chart
+
     const salesData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
@@ -263,7 +263,7 @@ function initializeCharts() {
         }
     });
 
-    // Order Status Chart
+    
     const orderData = {
         labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
         datasets: [{
@@ -282,7 +282,7 @@ function initializeCharts() {
         }
     });
 
-    // Supplier Performance Chart
+    
     const supplierData = {
         labels: ['Premium Meats Co.', 'Fresh Farm Supply', 'Quality Cuts Inc.', 'Local Butchers', 'Organic Farms'],
         datasets: [{
@@ -309,7 +309,7 @@ function initializeCharts() {
 function downloadPDF() {
     showNotification('Generating PDF report...', 'info');
     
-    // Simulate PDF generation
+    
     setTimeout(() => {
         const link = document.createElement('a');
         link.href = 'data:application/pdf;base64,JVBERi0xLjQKJdP0zOEKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPD4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIgNzkyXQovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA0NAo+PgpzdHJlYW0KQLQKMC4wNzUgMCA2MTIgNzkyIDYxMiAwIDAgMCA2MTJKS2VuZHN0cmVhbQt4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYKMDAwMDAwMDAwOSAwMDAwMCBuCjAwMDAwMDAwNzQgMDAwMDAgbgowMDAwMDAwMTIwIDAwMDAwIG4KMDAwMDAwMDE3OSAwMDAwMCBuCnRyYWlsZXIKPDwKL1NpemUgNQovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKMjczCiUlRU9GCg==';

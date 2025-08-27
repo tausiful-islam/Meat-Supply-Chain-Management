@@ -189,7 +189,7 @@ function setupBrandNavigation() {
     const brandLink = document.getElementById('brandLink');
     
     if (user) {
-        // User is logged in, redirect to appropriate dashboard
+      
         if (user.role === 'admin') {
             brandLink.href = 'admin_dashboard.html';
         } else if (user.role === 'customer') {
